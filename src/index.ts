@@ -28,15 +28,15 @@ async function run() {
         return
     }
 
-    await exec('npm', ['install', '-g', '@devcycle/cli@2.1.0-alpha.0'])
-
-    const output = await getExecOutput(
-        'dvc',
-        ['usages', '--format json']
-    )
-    const variables = JSON.parse(output.stdout)
-
     try {
+        await exec('npm', ['install', '-g', '@devcycle/cli@2.1.0-alpha.0'])
+
+        const output = await getExecOutput(
+            'dvc',
+            ['usages', '--format json']
+        )
+        const variables = JSON.parse(output.stdout)
+
         const authToken = await authenticate(clientId, clientSecret) 
 
         await postCodeUsages(`${owner}/${repo}`, variables, authToken)
