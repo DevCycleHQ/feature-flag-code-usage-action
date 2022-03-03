@@ -33,7 +33,7 @@ async function run() {
 
         const output = await getExecOutput(
             'dvc',
-            ['usages', '--format json']
+            ['usages', '--format', 'json']
         )
         const variables = JSON.parse(output.stdout)
 

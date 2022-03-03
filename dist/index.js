@@ -66,7 +66,7 @@ function run() {
         }
         try {
             yield (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@2.1.0-alpha.0']);
-            const output = yield (0, exec_1.getExecOutput)('dvc', ['usages', '--format json']);
+            const output = yield (0, exec_1.getExecOutput)('dvc', ['usages', '--format', 'json']);
             const variables = JSON.parse(output.stdout);
             const authToken = yield authenticate(clientId, clientSecret);
             yield postCodeUsages(`${owner}/${repo}`, variables, authToken);
