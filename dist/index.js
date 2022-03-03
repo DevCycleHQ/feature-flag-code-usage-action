@@ -65,7 +65,7 @@ function run() {
             return;
         }
         yield (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@2.1.0-alpha.0']);
-        const output = yield (0, exec_1.getExecOutput)('dvc', ['usages', '--json']);
+        const output = yield (0, exec_1.getExecOutput)('dvc', ['usages', '--format json']);
         const variables = JSON.parse(output.stdout);
         try {
             const authToken = yield authenticate(clientId, clientSecret);
