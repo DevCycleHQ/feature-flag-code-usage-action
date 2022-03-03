@@ -1,0 +1,32 @@
+{
+  "name": "feature-flage-code-usage-action",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "prepare": "husky install",
+    "build": "yarn install && tsc && yarn ncc build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevCycleHQ/feature-flage-code-usage-action.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DevCycleHQ/feature-flage-code-usage-action/issues"
+  },
+  "homepage": "https://github.com/DevCycleHQ/feature-flage-code-usage-action#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.9",
+    "@vercel/ncc": "^0.33.1",
+    "husky": "^7.0.4",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/exec": "^1.1.0",
+    "@actions/github": "^5.0.0",
+    "axios": "^0.26.0"
+  }
+}
