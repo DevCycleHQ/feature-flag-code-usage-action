@@ -11,7 +11,7 @@ const clientId = core.getInput('client-id')
 const clientSecret = core.getInput('client-secret')
 const octokit = token && github.getOctokit(token)
 
-const API_URL = 'https://api.devcycle.com/v1'
+const API_URL = 'https://api.devcycle.com/'
 const AUTH_URL = 'https://auth.devcycle.com/'
 
 async function run() {
@@ -42,7 +42,6 @@ async function run() {
         await postCodeUsages(`${owner}/${repo}`, variables, authToken)
     } catch (err: any) {
         core.setFailed(err)
-        throw err
     }
 }
 
@@ -65,7 +64,7 @@ const authenticate = async (client_id: string, client_secret: string): Promise<s
 }
 
 const postCodeUsages = async (repo: string, variables: any[], authToken: string): Promise<void> => {
-    const url = new URL(`/projects/${projectKey}/codeUsages`, API_URL)
+    const url = new URL(`/v1/projects/${projectKey}/codeUsages`, API_URL)
 
     const headers = { Authorization: authToken }
 
@@ -76,7 +75,10 @@ const postCodeUsages = async (repo: string, variables: any[], authToken: string)
             { headers }
         )
     } catch (e: any) {
+        console.log(url)
+        console.log(url.href)
         core.error(e)
+        core.error(e.response.data)
         throw new Error('Failed to submit Code Usages.')
     }
 }

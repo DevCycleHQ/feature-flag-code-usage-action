@@ -49,7 +49,7 @@ const projectKey = core.getInput('project-key');
 const clientId = core.getInput('client-id');
 const clientSecret = core.getInput('client-secret');
 const octokit = token && github.getOctokit(token);
-const API_URL = 'https://api.devcycle.com/v1';
+const API_URL = 'https://api.devcycle.com/';
 const AUTH_URL = 'https://auth.devcycle.com/';
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -73,7 +73,6 @@ function run() {
         }
         catch (err) {
             core.setFailed(err);
-            throw err;
         }
     });
 }
@@ -94,13 +93,14 @@ const authenticate = (client_id, client_secret) => __awaiter(void 0, void 0, voi
     }
 });
 const postCodeUsages = (repo, variables, authToken) => __awaiter(void 0, void 0, void 0, function* () {
-    const url = new URL(`/projects/${projectKey}/codeUsages`, API_URL);
+    const url = new URL(`/v1/projects/${projectKey}/codeUsages`, API_URL);
     const headers = { Authorization: authToken };
     try {
         yield axios_1.default.post(url.href, { repo, branch, variables }, { headers });
     }
     catch (e) {
         core.error(e);
+        core.error(e.response.data);
         throw new Error('Failed to submit Code Usages.');
     }
 });
