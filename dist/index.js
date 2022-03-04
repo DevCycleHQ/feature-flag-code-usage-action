@@ -42,8 +42,6 @@ const github = __importStar(__nccwpck_require__(5438));
 const core = __importStar(__nccwpck_require__(2186));
 const exec_1 = __nccwpck_require__(1514);
 const axios_1 = __importDefault(__nccwpck_require__(6545));
-const { owner, repo } = github.context.repo;
-const branch = github.context.ref;
 const token = core.getInput('github-token');
 const projectKey = core.getInput('project-key');
 const clientId = core.getInput('client-id');
@@ -68,8 +66,7 @@ function run() {
             yield (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@2.1.0-alpha.1']);
             const output = yield (0, exec_1.getExecOutput)('dvc', ['usages', '--format', 'json']);
             const variables = JSON.parse(output.stdout);
-            const authToken = yield authenticate(clientId, clientSecret);
-            yield postCodeUsages(`${owner}/${repo}`, variables, authToken);
+            yield postCodeUsages(variables);
         }
         catch (err) {
             core.setFailed(err);
@@ -92,11 +89,17 @@ const authenticate = (client_id, client_secret) => __awaiter(void 0, void 0, voi
         throw new Error('Failed to authenticate with the DevCycle API. Check your credentials.');
     }
 });
-const postCodeUsages = (repo, variables, authToken) => __awaiter(void 0, void 0, void 0, function* () {
+const postCodeUsages = (variables) => __awaiter(void 0, void 0, void 0, function* () {
+    const authToken = yield authenticate(clientId, clientSecret);
     const url = new URL(`/v1/projects/${projectKey}/codeUsages`, API_URL);
     const headers = { Authorization: authToken };
+    const { owner, repo } = github.context.repo;
     try {
-        yield axios_1.default.post(url.href, { repo, branch, variables }, { headers });
+        yield axios_1.default.post(url.href, {
+            repo: `${owner}/${repo}`,
+            branch: github.context.ref.split('/').pop(),
+            variables
+        }, { headers });
     }
     catch (e) {
         core.error(e);
