@@ -29,7 +29,7 @@ async function run() {
     }
 
     try {
-        await exec('npm', ['install', '-g', '@devcycle/cli@2.1.0-alpha.0'])
+        await exec('npm', ['install', '-g', '@devcycle/cli@2.1.0-alpha.1'])
 
         const output = await getExecOutput(
             'dvc',
@@ -75,8 +75,6 @@ const postCodeUsages = async (repo: string, variables: any[], authToken: string)
             { headers }
         )
     } catch (e: any) {
-        console.log(url)
-        console.log(url.href)
         core.error(e)
         core.error(e.response.data)
         throw new Error('Failed to submit Code Usages.')
