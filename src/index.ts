@@ -27,7 +27,7 @@ async function run() {
     }
 
     try {
-        await exec('npm', ['install', '-g', '@devcycle/cli@3.0.1'])
+        await exec('npm', ['install', '-g', '@devcycle/cli@3.0.3'])
 
         const output = await getExecOutput(
             'dvc',
@@ -60,7 +60,7 @@ const authenticate = async (client_id: string, client_secret: string): Promise<s
 }
 
 const postCodeUsages = async (variables: any[]): Promise<void> => {
-    const authToken = await authenticate(clientId, clientSecret) 
+    const authToken = await authenticate(clientId, clientSecret)
     const url = new URL(`/v1/projects/${projectKey}/codeUsages`, API_URL)
 
     const headers = { Authorization: authToken }
