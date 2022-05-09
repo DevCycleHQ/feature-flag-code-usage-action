@@ -1,9 +1,6 @@
 name: DevCycle Feature Flag Code Usages
 description: Identifies DevCycle variable references within your project, and populates Code Usages in your DevCycle dashboard.
 author: DevCycleHQ
-branding:
-  color: blue
-  icon: flag
 inputs:
   project-key:
     description: "Your DevCycle project key (Recommended)"
