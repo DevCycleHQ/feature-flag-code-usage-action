@@ -63,7 +63,7 @@ function run() {
             return;
         }
         try {
-            yield (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@4.0.0']);
+            yield (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@4.2.0']);
             const output = yield (0, exec_1.getExecOutput)('dvc', ['usages', '--format', 'json']);
             const variables = JSON.parse(output.stdout);
             yield postCodeUsages(variables);
