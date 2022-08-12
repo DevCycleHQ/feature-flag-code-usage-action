@@ -70,6 +70,7 @@ const postCodeUsages = async (variables: any[]): Promise<void> => {
         await axios.post(
             url.href,
             {
+                source: 'github',
                 repo: `${owner}/${repo}`,
                 branch: github.context.ref.split('/').pop(),
                 variables
