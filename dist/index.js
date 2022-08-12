@@ -96,6 +96,7 @@ const postCodeUsages = (variables) => __awaiter(void 0, void 0, void 0, function
     const { owner, repo } = github.context.repo;
     try {
         yield axios_1.default.post(url.href, {
+            source: 'github',
             repo: `${owner}/${repo}`,
             branch: github.context.ref.split('/').pop(),
             variables
