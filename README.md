@@ -40,9 +40,9 @@ When referencing your API client ID and secret, we recommend using [GitHub Secre
 | input | required | description |
 | ----- | -------- | ----------- |
 | `github-token` | yes | The GitHub Actions token e.g. `secrets.GITHUB_TOKEN` |
-| `project-key` | yes | Your DevCycle project key, see [Projects](https://app.devcycle.com/settings/projects) |
-| `client-id` | yes | Your organization's API client ID, see [Organization Settings](https://app.devcycle.com/settings) |
-| `client-secret` | yes | Your organization's API client secret, see [Organization Settings](https://app.devcycle.com/settings) |
+| `project-key` | yes | Your DevCycle project key, see [Projects](https://app.devcycle.com/r/projects) |
+| `client-id` | yes | Your organization's API client ID, see [Organization Settings](https://app.devcycle.com/r/settings) |
+| `client-secret` | yes | Your organization's API client secret, see [Organization Settings](https://app.devcycle.com/r/settings) |
 
 ### Configuration
 The patterns used to identify references to variables in your code are fully customizable.
