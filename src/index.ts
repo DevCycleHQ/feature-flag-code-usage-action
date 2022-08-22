@@ -27,7 +27,7 @@ async function run() {
     }
 
     try {
-        await exec('npm', ['install', '-g', '@devcycle/cli@4.0.0'])
+        await exec('npm', ['install', '-g', '@devcycle/cli@4.2.3'])
 
         const output = await getExecOutput(
             'dvc',
