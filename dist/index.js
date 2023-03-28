@@ -46,6 +46,7 @@ const exec_1 = __nccwpck_require__(1514);
 const axios_1 = __importDefault(__nccwpck_require__(6545));
 const API_URL = 'https://api.devcycle.com/';
 const AUTH_URL = 'https://auth.devcycle.com/';
+const DVC_IDENTIFIER = 'github.code_usages';
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const requiredInputs = ['github-token', 'project-key', 'client-id', 'client-secret'];
@@ -62,8 +63,8 @@ function run() {
             return;
         }
         try {
-            yield (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@4.2.8']);
-            const output = yield (0, exec_1.getExecOutput)('dvc', ['usages', '--format', 'json']);
+            yield (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@4.2.10']);
+            const output = yield (0, exec_1.getExecOutput)('dvc', ['usages', '--format', 'json', '--caller', DVC_IDENTIFIER]);
             const variables = JSON.parse(output.stdout);
             yield action.postCodeUsages(variables);
         }
@@ -97,7 +98,8 @@ const postCodeUsages = (variables) => __awaiter(void 0, void 0, void 0, function
     const authToken = yield action.authenticate(clientId, clientSecret);
     const url = new URL(`/v1/projects/${projectKey}/codeUsages`, API_URL);
     const headers = {
-        Authorization: authToken
+        Authorization: authToken,
+        'dvc-referrer': DVC_IDENTIFIER
     };
     const { owner, repo } = github.context.repo;
     try {

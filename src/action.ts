@@ -7,6 +7,8 @@ import axios from 'axios'
 const API_URL = 'https://api.devcycle.com/'
 const AUTH_URL = 'https://auth.devcycle.com/'
 
+const DVC_IDENTIFIER = 'github.code_usages'
+
 export async function run() {
     const requiredInputs = ['github-token', 'project-key', 'client-id', 'client-secret']
     for (const inputKey of requiredInputs) {
@@ -24,11 +26,11 @@ export async function run() {
     }
 
     try {
-        await exec('npm', ['install', '-g', '@devcycle/cli@4.2.8'])
+        await exec('npm', ['install', '-g', '@devcycle/cli@4.2.10'])
 
         const output = await getExecOutput(
             'dvc',
-            ['usages', '--format', 'json']
+            ['usages', '--format', 'json', '--caller', DVC_IDENTIFIER]
         )
         const variables = JSON.parse(output.stdout)
 
@@ -65,7 +67,8 @@ export const postCodeUsages = async (variables: any[]): Promise<void> => {
     const url = new URL(`/v1/projects/${projectKey}/codeUsages`, API_URL)
 
     const headers = {
-        Authorization: authToken
+        Authorization: authToken,
+        'dvc-referrer': DVC_IDENTIFIER
     }
     const { owner, repo } = github.context.repo
 
