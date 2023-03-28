@@ -127,7 +127,8 @@ describe('postCodeUsages', () => {
             }),
             expect.objectContaining({
                 headers: {
-                    Authorization: 'generated-token'
+                    Authorization: 'generated-token',
+                    'dvc-referrer': 'github.code_usages'
                 }
             })
         )
