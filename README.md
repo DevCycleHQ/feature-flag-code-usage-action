@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: DevCycleHQ/feature-flag-code-usage-action@1.0.4
+      - uses: DevCycleHQ/feature-flag-code-usage-action@1.0.7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           client-id: ${{ secrets.DVC_CLIENT_ID }}
