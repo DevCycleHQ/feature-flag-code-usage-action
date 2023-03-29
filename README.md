@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Fetch DevCycle Code Usages
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: DevCycleHQ/feature-flag-code-usage-action@1.0.7

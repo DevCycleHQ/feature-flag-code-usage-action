@@ -1,0 +1,18 @@
+on: [push]
+
+name: Test Workflow
+
+jobs:
+  dvc-code-usages:
+    runs-on: ubuntu-latest
+    name: Update code usages
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: ./
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          client-id: ${{ secrets.DVC_CLIENT_ID }}
+          client-secret: ${{ secrets.DVC_CLIENT_SECRET }}
+          project-key: default
