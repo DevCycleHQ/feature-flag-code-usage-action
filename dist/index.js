@@ -63,7 +63,7 @@ function run() {
             return;
         }
         try {
-            yield (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@4.2.11']);
+            yield (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@4.3.0']);
             const output = yield (0, exec_1.getExecOutput)('dvc', ['usages', '--format', 'json', '--caller', DVC_IDENTIFIER]);
             const variables = JSON.parse(output.stdout);
             yield action.postCodeUsages(variables);
