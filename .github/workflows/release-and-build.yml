@@ -1,0 +1,81 @@
+name: 'Release and Build'
+description: 'Build the project, commit changes, create a new release, and tag it'
+on:
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: "Prerelease"
+        required: true
+        default: false
+        type: boolean
+      draft:
+        description: "Draft"
+        required: true
+        default: false
+        type: boolean
+      version-increment-type:
+          description: 'Which part of the version to increment:'
+          required: true
+          type: choice
+          options:
+            - major
+            - minor
+            - patch
+          default: 'patch'
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # Adjust this to your project's Node.js version
+
+      - name: Install dependencies
+        shell: bash
+        run: yarn install
+
+      - name: Build project
+        shell: bash
+        run: yarn build
+      - name: Prepare Release
+        id: prepare_release
+        uses: DevCycleHQ/release-action/prepare-release@v2.3.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version-increment-type: ${{ inputs.version-increment-type }}
+          prerelease: ${{ inputs.prerelease }}
+          draft: ${{ inputs.draft }}
+      - name: Commit version change
+        run: |
+            git config --global user.email "github-tracker-bot@taplytics.com"
+            git config --global user.name "DevCycle Automation"
+            git add .
+            git commit -m "Release ${{steps.prepare_release.outputs.next-release-tag}}"
+      - name: Push version change
+        run: |
+          git push origin HEAD:main
+        if: inputs.draft != true
+      - name: Create Release
+        id: create_release
+        uses: DevCycleHQ/release-action/create-release@v2.3.0
+        with:
+          tag: ${{ steps.prepare_release.outputs.next-release-tag }}
+          target: ${{ github.sha }}
+          changelog: ${{ steps.prepare_release.outputs.changelog }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: ${{ inputs.prerelease }}
+          draft: ${{ inputs.draft }}
+
+outputs:
+  release-tag:
+    description: 'Tag used for the release'
+    value: ${{ steps.prepare_release.outputs.next-release-tag }}
+  release-url:
+    description: 'URL of the created release'
+    value: ${{ steps.create_release.outputs.release-url }}
