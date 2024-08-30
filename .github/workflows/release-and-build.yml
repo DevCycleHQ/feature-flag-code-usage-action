@@ -1,5 +1,4 @@
 name: 'Release and Build'
-description: 'Build the project, commit changes, create a new release, and tag it'
 on:
   workflow_dispatch:
     inputs:
@@ -34,7 +33,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'  # Adjust this to your project's Node.js version
+          node-version: '20'
 
       - name: Install dependencies
         shell: bash
@@ -47,20 +46,27 @@ jobs:
         id: prepare_release
         uses: DevCycleHQ/release-action/prepare-release@v2.3.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          version-increment-type: ${{ inputs.version-increment-type }}
-          prerelease: ${{ inputs.prerelease }}
-          draft: ${{ inputs.draft }}
-      - name: Commit version change
+          github-token: ${{ secrets.AUTOMATION_USER_TOKEN }}
+          version-increment-type: ${{ github.event.inputs.version-increment-type || 'patch' }}
+          prerelease: ${{ github.event.inputs.prerelease }}
+          draft: ${{ github.event.inputs.draft }}
+      - name: Update README.md
+        run: |
+          sed -i -E 's/(DevCycleHQ\/feature-flag-code-usage-action@)(main|v[0-9]+\.[0-9]+\.[0-9]+)/\1${{steps.prepare_release.outputs.next-release-tag}}/g' README.md
+        if: github.event.inputs.draft != true
+
+      - name: Commit version change and README update
         run: |
             git config --global user.email "github-tracker-bot@taplytics.com"
             git config --global user.name "DevCycle Automation"
             git add .
-            git commit -m "Release ${{steps.prepare_release.outputs.next-release-tag}}"
+            git commit -m "Release ${{steps.prepare_release.outputs.next-release-tag}} and update README"
+        if: github.event.inputs.draft != true
+
       - name: Push version change
         run: |
-          git push origin HEAD:main
-        if: inputs.draft != true
+          git push origin HEAD:release-workflow  # Change this to your test branch name
+        if: github.event.inputs.draft != true
       - name: Create Release
         id: create_release
         uses: DevCycleHQ/release-action/create-release@v2.3.0
@@ -68,14 +74,6 @@ jobs:
           tag: ${{ steps.prepare_release.outputs.next-release-tag }}
           target: ${{ github.sha }}
           changelog: ${{ steps.prepare_release.outputs.changelog }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: ${{ inputs.prerelease }}
-          draft: ${{ inputs.draft }}
-
-outputs:
-  release-tag:
-    description: 'Tag used for the release'
-    value: ${{ steps.prepare_release.outputs.next-release-tag }}
-  release-url:
-    description: 'URL of the created release'
-    value: ${{ steps.create_release.outputs.release-url }}
+          github-token: ${{ secrets.AUTOMATION_USER_TOKEN }}
+          prerelease: ${{ github.event.inputs.draft }}
+          draft: ${{ github.event.inputs.draft }}
