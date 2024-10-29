@@ -60,7 +60,7 @@ jobs:
 
       - name: Commit version change and README update
         run: |
-            git config --global user.email "github-tracker-bot@taplytics.com"
+            git config --global user.email "foundation-admin@devcycle.com"
             git config --global user.name "DevCycle Automation"
             git add .
             git commit -m "Release ${{steps.prepare_release.outputs.next-release-tag}} and update README"
