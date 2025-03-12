@@ -52,10 +52,13 @@ export const authenticate = async (client_id: string, client_secret: string): Pr
             method: 'POST',
             body: formData,
         })
+        if (!resp.ok) {
+            throw new Error('Failed to authenticate with the DevCycle API. Check your credentials.')
+        }
         return (await resp.json()).access_token
     } catch (e: any) {
         core.error(e)
-        throw new Error('Failed to authenticate with the DevCycle API. Check your credentials.')
+        throw e
     }
 }
 

@@ -68,10 +68,16 @@ describe('authenticate', () => {
         ) as jest.Mock;
 
         const returnedToken = await action.authenticate('mock-client-id', 'mock-client-secret')
+        const formData = new FormData()
+        formData.append('grant_type', 'client_credentials')
+        formData.append('client_id', 'mock-client-id')
+        formData.append('client_secret', 'mock-client-secret')
+        formData.append('audience', 'https://api.devcycle.com/')
+
 
         expect(fetch).toBeCalledWith(
-            expect.stringContaining('grant_type=client_credentials&client_id=mock-client-id&client_secret=mock-client-secret&audience=https://api.devcycle.com/')
-        )
+            'https://auth.devcycle.com/oauth/token',
+            expect.objectContaining({body: formData}))
         expect(returnedToken).toEqual('123')
     })
 
@@ -83,7 +89,7 @@ describe('authenticate', () => {
         ) as jest.Mock;
         const authenticate = () => action.authenticate('mock-client-id', 'mock-client-secret')
 
-        expect(authenticate).rejects.toThrow('Failed to authenticate with the DevCycle API. Check your credentials.')
+        await expect(authenticate).rejects.toThrow('Failed to authenticate with the DevCycle API. Check your credentials.')
     })
 })
 
