@@ -77,7 +77,7 @@ export const postCodeUsages = async (variables: any[]): Promise<void> => {
     const { owner, repo } = github.context.repo
 
     try {
-        await fetch(url.href, {
+        const resp = await fetch(url.href, {
             method: 'POST',
             headers: {
                 ...headers,
@@ -90,9 +90,12 @@ export const postCodeUsages = async (variables: any[]): Promise<void> => {
                 variables
             })
         })
+        if (!resp.ok) {
+            throw new Error('Failed to submit Code Usages.')
+        }
     } catch (e: any) {
         core.error(e)
         core.error(e.response.data)
-        throw new Error('Failed to submit Code Usages.')
+        throw e
     }
 }

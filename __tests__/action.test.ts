@@ -152,6 +152,6 @@ describe('postCodeUsages', () => {
 
         const postCodeUsages = () => action.postCodeUsages([])
 
-        expect(postCodeUsages).rejects.toThrow('Failed to submit Code Usages.')
+        await expect(postCodeUsages).rejects.toThrow('Failed to submit Code Usages.')
     })
 })
