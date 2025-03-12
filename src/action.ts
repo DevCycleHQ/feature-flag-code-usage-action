@@ -95,7 +95,6 @@ export const postCodeUsages = async (variables: any[]): Promise<void> => {
         }
     } catch (e: any) {
         core.error(e)
-        core.error(e.response.data)
         throw e
     }
 }
