@@ -1,6 +1,6 @@
 import * as action from '../src/action'
 
-jest.mock('axios')
+
 jest.mock('@actions/core')
 jest.mock('@actions/exec')
 jest.mock('@actions/github')
@@ -35,7 +35,7 @@ describe('run', () => {
     test.each([
         'github-token', 'project-key', 'client-id', 'client-secret'
     ])('fails when missing parameter: %s', async (param) => {
-        const inputs = { ...mockInputs }
+        const inputs = {...mockInputs}
         delete inputs[param]
         core.getInput = jest.fn().mockImplementation((key) => inputs[key])
         await action.run()
@@ -44,7 +44,7 @@ describe('run', () => {
     })
 
     it('calls postCodeUsages for a valid request', async () => {
-        exec.getExecOutput = jest.fn().mockResolvedValue({ stdout: '[]' })
+        exec.getExecOutput = jest.fn().mockResolvedValue({stdout: '[]'})
         await action.run()
 
         expect(action.authenticate).not.toBeCalled()
@@ -54,40 +54,48 @@ describe('run', () => {
 })
 
 describe('authenticate', () => {
-    const axios = require('axios')
+
 
     beforeEach(() => {
         jest.clearAllMocks()
     })
 
     it('sends authentication request', async () => {
-        axios.post = jest.fn().mockResolvedValue({ data: { access_token: '123' } })
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+                json: () => Promise.resolve({access_token: '123'}),
+                ok: true
+            }),
+        ) as jest.Mock;
 
         const returnedToken = await action.authenticate('mock-client-id', 'mock-client-secret')
+        const formData = new FormData()
+        formData.append('grant_type', 'client_credentials')
+        formData.append('client_id', 'mock-client-id')
+        formData.append('client_secret', 'mock-client-secret')
+        formData.append('audience', 'https://api.devcycle.com/')
 
-        expect(axios.post).toBeCalledWith(
+
+        expect(fetch).toBeCalledWith(
             'https://auth.devcycle.com/oauth/token',
-            expect.objectContaining({
-                grant_type: 'client_credentials',
-                client_id: 'mock-client-id',
-                client_secret: 'mock-client-secret',
-                audience: 'https://api.devcycle.com/',
-            })
-        )
+            expect.objectContaining({body: formData}))
         expect(returnedToken).toEqual('123')
     })
 
     it('fails if an error is thrown during authentication', async () => {
-        axios.post = jest.fn().mockRejectedValue('Some error')
-
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+                json: () => Promise.resolve('Some error'),
+                ok: false
+            }),
+        ) as jest.Mock;
         const authenticate = () => action.authenticate('mock-client-id', 'mock-client-secret')
 
-        expect(authenticate).rejects.toThrow('Failed to authenticate with the DevCycle API. Check your credentials.')
+        await expect(authenticate).rejects.toThrow('Failed to authenticate with the DevCycle API. Check your credentials.')
     })
 })
 
 describe('postCodeUsages', () => {
-    const axios = require('axios')
     const core = require('@actions/core')
     const github = require('@actions/github')
 
@@ -112,35 +120,42 @@ describe('postCodeUsages', () => {
     })
 
     it('sends request to API', async () => {
-        axios.post = jest.fn()
-
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+                json: () => Promise.resolve({}),
+                ok: true
+            }),
+        ) as jest.Mock;
         await action.postCodeUsages([])
 
         expect(action.authenticate).toBeCalledWith('id', 'secret')
-        expect(axios.post).toBeCalledWith(
+        expect(fetch).toBeCalledWith(
             'https://api.devcycle.com/v1/projects/my-project/codeUsages',
-            expect.objectContaining({
-                source: 'github',
-                repo: 'mock-owner/mock-repo',
-                branch: github.context.ref.split('/').pop(),
-                variables: []
-            }),
-            expect.objectContaining({
-                headers: {
-                    Authorization: 'generated-token',
-                    'dvc-referrer': 'github.code_usages'
-                }
-            })
-        )
+                {
+                    body: JSON.stringify({
+                        source: 'github',
+                        repo: 'mock-owner/mock-repo',
+                        branch: github.context.ref.split('/').pop(),
+                        variables: []
+                    }),
+                    method: 'POST',
+                    headers: expect.objectContaining({
+                        Authorization: 'generated-token',
+                        'dvc-referrer': 'github.code_usages'
+                    })
+                })
     })
 
     it('fails if an error is thrown when sending code usages', async () => {
-        axios.post = jest.fn().mockRejectedValue({
-            response: { data: { message: 'Some error' } }
-        })
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+                json: () => Promise.resolve('Some error'),
+                ok: false
+            }),
+        ) as jest.Mock;
 
         const postCodeUsages = () => action.postCodeUsages([])
 
-        expect(postCodeUsages).rejects.toThrow('Failed to submit Code Usages.')
+        await expect(postCodeUsages).rejects.toThrow('Failed to submit Code Usages.')
     })
 })

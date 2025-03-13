@@ -2,7 +2,6 @@ import * as action from './action'
 import * as github from '@actions/github'
 import * as core from '@actions/core'
 import { exec, getExecOutput } from '@actions/exec'
-import axios from 'axios'
 
 const API_URL = 'https://api.devcycle.com/'
 const AUTH_URL = 'https://auth.devcycle.com/'
@@ -44,17 +43,22 @@ export const authenticate = async (client_id: string, client_secret: string): Pr
     const url = new URL('/oauth/token', AUTH_URL)
 
     try {
-        const response = await axios.post(url.href, {
-            grant_type: 'client_credentials',
-            client_id,
-            client_secret,
-            audience: 'https://api.devcycle.com/',
+        const formData  = new FormData();
+        formData.append('grant_type', 'client_credentials');
+        formData.append('client_id',client_id);
+        formData.append('client_secret',client_secret);
+        formData.append('audience','https://api.devcycle.com/');
+        const resp = await fetch(url.href, {
+            method: 'POST',
+            body: formData,
         })
-
-        return response.data.access_token
+        if (!resp.ok) {
+            throw new Error('Failed to authenticate with the DevCycle API. Check your credentials.')
+        }
+        return (await resp.json()).access_token
     } catch (e: any) {
         core.error(e)
-        throw new Error('Failed to authenticate with the DevCycle API. Check your credentials.')
+        throw e
     }
 }
 
@@ -73,19 +77,24 @@ export const postCodeUsages = async (variables: any[]): Promise<void> => {
     const { owner, repo } = github.context.repo
 
     try {
-        await axios.post(
-            url.href,
-            {
+        const resp = await fetch(url.href, {
+            method: 'POST',
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
                 source: 'github',
                 repo: `${owner}/${repo}`,
                 branch: github.context.ref.split('/').pop(),
                 variables
-            },
-            { headers }
-        )
+            })
+        })
+        if (!resp.ok) {
+            throw new Error('Failed to submit Code Usages.')
+        }
     } catch (e: any) {
         core.error(e)
-        core.error(e.response.data)
-        throw new Error('Failed to submit Code Usages.')
+        throw e
     }
 }
