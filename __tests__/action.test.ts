@@ -64,6 +64,7 @@ describe('authenticate', () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 json: () => Promise.resolve({access_token: '123'}),
+                ok: true
             }),
         ) as jest.Mock;
 
@@ -85,6 +86,7 @@ describe('authenticate', () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 json: () => Promise.resolve('Some error'),
+                ok: false
             }),
         ) as jest.Mock;
         const authenticate = () => action.authenticate('mock-client-id', 'mock-client-secret')
@@ -121,6 +123,7 @@ describe('postCodeUsages', () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 json: () => Promise.resolve({}),
+                ok: true
             }),
         ) as jest.Mock;
         await action.postCodeUsages([])
@@ -128,25 +131,26 @@ describe('postCodeUsages', () => {
         expect(action.authenticate).toBeCalledWith('id', 'secret')
         expect(fetch).toBeCalledWith(
             'https://api.devcycle.com/v1/projects/my-project/codeUsages',
-            expect.objectContaining(
                 {
-                    body: expect.stringContaining(JSON.stringify({
+                    body: JSON.stringify({
                         source: 'github',
                         repo: 'mock-owner/mock-repo',
                         branch: github.context.ref.split('/').pop(),
                         variables: []
-                    })),
-                    headers: {
+                    }),
+                    method: 'POST',
+                    headers: expect.objectContaining({
                         Authorization: 'generated-token',
                         'dvc-referrer': 'github.code_usages'
-                    }
-                }))
+                    })
+                })
     })
 
     it('fails if an error is thrown when sending code usages', async () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 json: () => Promise.resolve('Some error'),
+                ok: false
             }),
         ) as jest.Mock;
 
