@@ -68,7 +68,8 @@ jobs:
 
       - name: Push version change
         run: |
-          git push origin HEAD:release-workflow  # Change this to your test branch name
+          git pull
+          git push -u origin main
         if: github.event.inputs.draft != true
       - name: Create Release
         id: create_release
