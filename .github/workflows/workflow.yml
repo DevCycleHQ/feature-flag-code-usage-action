@@ -1,4 +1,5 @@
-on: [push]
+on:
+  push:
 
 name: Test Workflow
 
@@ -11,6 +12,16 @@ jobs:
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Setup Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.2.1 --activate
+      - name: Build
+        run: yarn build
       - uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
