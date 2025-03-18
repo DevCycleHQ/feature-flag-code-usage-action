@@ -16,4 +16,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           client-id: ${{ secrets.DVC_CLIENT_ID }}
           client-secret: ${{ secrets.DVC_CLIENT_SECRET }}
-          project-key: default
+          project-key: git-hub-actions-integration-tests
