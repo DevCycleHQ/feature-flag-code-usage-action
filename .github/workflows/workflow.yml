@@ -16,7 +16,6 @@ jobs:
         uses: actions/setup-node@v4.3.0
         with:
           node-version: '20'
-          cache: 'yarn'
       - name: Setup Yarn
         run: |
           corepack enable
