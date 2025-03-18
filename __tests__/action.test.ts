@@ -93,7 +93,7 @@ describe('authenticate', () => {
         ) as jest.Mock;
         const authenticate = () => action.authenticate('mock-client-id', 'mock-client-secret')
 
-        await expect(authenticate).rejects.toThrow(expect.stringContaining('Failed to authenticate with the DevCycle API. Check your credentials'))
+        await expect(authenticate).rejects.toThrow('Failed to authenticate with the DevCycle API. Check your credentials.')
     })
 })
 
