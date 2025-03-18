@@ -20,6 +20,8 @@ jobs:
         run: |
           corepack enable
           corepack prepare yarn@4.2.1 --activate
+      - name: Install
+        run: yarn install
       - name: Build
         run: yarn build
       - uses: ./
