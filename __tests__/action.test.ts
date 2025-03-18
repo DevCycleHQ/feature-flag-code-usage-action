@@ -86,7 +86,8 @@ describe('authenticate', () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 json: () => Promise.resolve('Some error'),
-                ok: false
+                ok: false,
+                status: 401
             }),
         ) as jest.Mock;
         const authenticate = () => action.authenticate('mock-client-id', 'mock-client-secret')
