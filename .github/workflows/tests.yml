@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
       - uses: actions/setup-node@v4
       - run: corepack enable && yarn --version
       - run: yarn install

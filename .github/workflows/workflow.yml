@@ -1,4 +1,5 @@
-on: [push]
+on:
+  push:
 
 name: Test Workflow
 
@@ -9,10 +10,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref }}
           fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version: '20'
+      - name: Setup Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.2.1 --activate
+      - name: Install
+        run: yarn install
+      - name: Build
+        run: yarn build
       - uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           client-id: ${{ secrets.DVC_CLIENT_ID }}
           client-secret: ${{ secrets.DVC_CLIENT_SECRET }}
-          project-key: default
+          project-key: git-hub-actions-integration-tests

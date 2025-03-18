@@ -69,16 +69,17 @@ describe('authenticate', () => {
         ) as jest.Mock;
 
         const returnedToken = await action.authenticate('mock-client-id', 'mock-client-secret')
-        const formData = new FormData()
-        formData.append('grant_type', 'client_credentials')
-        formData.append('client_id', 'mock-client-id')
-        formData.append('client_secret', 'mock-client-secret')
-        formData.append('audience', 'https://api.devcycle.com/')
+        const params = new URLSearchParams({
+            grant_type: 'client_credentials',
+            client_id: 'mock-client-id',
+            client_secret: 'mock-client-secret',
+            audience: 'https://api.devcycle.com/'
+        })
 
 
         expect(fetch).toBeCalledWith(
             'https://auth.devcycle.com/oauth/token',
-            expect.objectContaining({body: formData}))
+            expect.objectContaining({body: params.toString()}))
         expect(returnedToken).toEqual('123')
     })
 
@@ -86,7 +87,8 @@ describe('authenticate', () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 json: () => Promise.resolve('Some error'),
-                ok: false
+                ok: false,
+                status: 401
             }),
         ) as jest.Mock;
         const authenticate = () => action.authenticate('mock-client-id', 'mock-client-secret')
