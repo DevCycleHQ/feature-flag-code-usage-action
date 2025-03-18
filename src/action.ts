@@ -25,7 +25,7 @@ export async function run() {
     }
 
     try {
-        await exec('npm', ['install', '-g', '@devcycle/cli@5.16.2'])
+        await exec('npm', ['install', '-g', '@devcycle/cli@5.20.2'])
 
         const output = await getExecOutput(
             'dvc',
@@ -40,17 +40,18 @@ export async function run() {
 }
 
 export const authenticate = async (client_id: string, client_secret: string): Promise<string> => {
-    const url = new URL('/oauth/token', AUTH_URL)
+
 
     try {
-        const formData  = new FormData();
-        formData.append('grant_type', 'client_credentials');
-        formData.append('client_id',client_id);
-        formData.append('client_secret',client_secret);
-        formData.append('audience','https://api.devcycle.com/');
+        const params = new URLSearchParams({
+            grant_type: 'client_credentials',
+            client_id,
+            client_secret,
+            audience: API_URL
+        })
+        const url = new URL(`/oauth/token?${params.toString()}`, AUTH_URL)
         const resp = await fetch(url.href, {
             method: 'POST',
-            body: formData,
         })
         if (resp.status >= 400) {
             throw new Error('Failed to authenticate with the DevCycle API. Check your credentials.')
