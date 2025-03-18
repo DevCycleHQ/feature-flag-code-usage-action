@@ -49,11 +49,13 @@ export const authenticate = async (client_id: string, client_secret: string): Pr
             client_secret,
             audience: API_URL
         })
-        const url = new URL(`/oauth/token?${params.toString()}`, AUTH_URL)
+        const url = new URL(`/oauth/token`, AUTH_URL)
         const resp = await fetch(url.href, {
             method: 'POST',
+            body: params.toString(),
+            headers: {'content-type': 'application/x-www-form-urlencoded'}
         })
-        if (resp.status >= 400) {
+        if (!resp.ok) {
             throw new Error('Failed to authenticate with the DevCycle API. Check your credentials.')
         }
         return (await resp.json()).access_token
