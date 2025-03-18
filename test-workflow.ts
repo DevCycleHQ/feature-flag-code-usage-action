@@ -28,7 +28,7 @@ function useDVCVariable() {
   
   // Fetch variable values using the identifier key coupled with a default value
   // The default value can be of type string, boolean, number, or object
-  const dvcVariableNumber = dvcClient.variable('test-feature-number', 10)
-  const dvcVariableString = dvcClient.variable('test-feature-string', '10')
-  const dvcVariableJson = dvcClient.variable('test-feature-json', {})
+  const dvcVariableNumber = dvcClient.variable('gha-ff-code-usages', 10)
+  const dvcVariableString = dvcClient.variable('gha-ff-code-usages-string', '10')
+  const dvcVariableJson = dvcClient.variable('gha-ff-code-usages-json', {})
 }
