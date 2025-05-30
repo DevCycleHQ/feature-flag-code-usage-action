@@ -9,7 +9,12 @@ const AUTH_URL = 'https://auth.devcycle.com/'
 const DVC_IDENTIFIER = 'github.code_usages'
 
 export async function run() {
-    const requiredInputs = ['github-token', 'project-key', 'client-id', 'client-secret']
+    const requiredInputs = [
+        'github-token',
+        'project-key',
+        'client-id',
+        'client-secret',
+    ]
     for (const inputKey of requiredInputs) {
         if (!core.getInput(inputKey)) {
             core.setFailed(`Missing ${inputKey}`)
@@ -25,12 +30,15 @@ export async function run() {
     }
 
     try {
-        await exec('npm', ['install', '-g', '@devcycle/cli@5.20.2'])
+        await exec('npm', ['install', '-g', '@devcycle/cli@5.20.3'])
 
-        const output = await getExecOutput(
-            'dvc',
-            ['usages', '--format', 'json', '--caller', DVC_IDENTIFIER]
-        )
+        const output = await getExecOutput('dvc', [
+            'usages',
+            '--format',
+            'json',
+            '--caller',
+            DVC_IDENTIFIER,
+        ])
         const variables = JSON.parse(output.stdout)
 
         await action.postCodeUsages(variables)
@@ -39,24 +47,27 @@ export async function run() {
     }
 }
 
-export const authenticate = async (client_id: string, client_secret: string): Promise<string> => {
-
-
+export const authenticate = async (
+    client_id: string,
+    client_secret: string,
+): Promise<string> => {
     try {
         const params = new URLSearchParams({
             grant_type: 'client_credentials',
             client_id,
             client_secret,
-            audience: API_URL
+            audience: API_URL,
         })
         const url = new URL(`/oauth/token`, AUTH_URL)
         const resp = await fetch(url.href, {
             method: 'POST',
             body: params.toString(),
-            headers: {'content-type': 'application/x-www-form-urlencoded'}
+            headers: { 'content-type': 'application/x-www-form-urlencoded' },
         })
         if (!resp.ok) {
-            throw new Error('Failed to authenticate with the DevCycle API. Check your credentials.')
+            throw new Error(
+                'Failed to authenticate with the DevCycle API. Check your credentials.',
+            )
         }
         return (await resp.json()).access_token
     } catch (e: any) {
@@ -75,7 +86,7 @@ export const postCodeUsages = async (variables: any[]): Promise<void> => {
 
     const headers = {
         Authorization: authToken,
-        'dvc-referrer': DVC_IDENTIFIER
+        'dvc-referrer': DVC_IDENTIFIER,
     }
     const { owner, repo } = github.context.repo
 
@@ -84,14 +95,14 @@ export const postCodeUsages = async (variables: any[]): Promise<void> => {
             method: 'POST',
             headers: {
                 ...headers,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 source: 'github',
                 repo: `${owner}/${repo}`,
                 branch: github.context.ref.split('/').pop(),
-                variables
-            })
+                variables,
+            }),
         })
         if (!resp.ok) {
             throw new Error('Failed to submit Code Usages.')
