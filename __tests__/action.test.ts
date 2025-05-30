@@ -1,6 +1,5 @@
 import * as action from '../src/action'
 
-
 jest.mock('@actions/core')
 jest.mock('@actions/exec')
 jest.mock('@actions/github')
@@ -9,7 +8,7 @@ const mockInputs: Record<string, string> = {
     'github-token': 'token',
     'project-key': 'my-project',
     'client-id': 'id',
-    'client-secret': 'secret'
+    'client-secret': 'secret',
 }
 
 describe('run', () => {
@@ -32,19 +31,20 @@ describe('run', () => {
         core.getInput = jest.fn().mockImplementation((key) => mockInputs[key])
     })
 
-    test.each([
-        'github-token', 'project-key', 'client-id', 'client-secret'
-    ])('fails when missing parameter: %s', async (param) => {
-        const inputs = {...mockInputs}
-        delete inputs[param]
-        core.getInput = jest.fn().mockImplementation((key) => inputs[key])
-        await action.run()
+    test.each(['github-token', 'project-key', 'client-id', 'client-secret'])(
+        'fails when missing parameter: %s',
+        async (param) => {
+            const inputs = { ...mockInputs }
+            delete inputs[param]
+            core.getInput = jest.fn().mockImplementation((key) => inputs[key])
+            await action.run()
 
-        expect(core.setFailed).toBeCalledWith(`Missing ${param}`)
-    })
+            expect(core.setFailed).toBeCalledWith(`Missing ${param}`)
+        },
+    )
 
     it('calls postCodeUsages for a valid request', async () => {
-        exec.getExecOutput = jest.fn().mockResolvedValue({stdout: '[]'})
+        exec.getExecOutput = jest.fn().mockResolvedValue({ stdout: '[]' })
         await action.run()
 
         expect(action.authenticate).not.toBeCalled()
@@ -54,8 +54,6 @@ describe('run', () => {
 })
 
 describe('authenticate', () => {
-
-
     beforeEach(() => {
         jest.clearAllMocks()
     })
@@ -63,23 +61,26 @@ describe('authenticate', () => {
     it('sends authentication request', async () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
-                json: () => Promise.resolve({access_token: '123'}),
-                ok: true
+                json: () => Promise.resolve({ access_token: '123' }),
+                ok: true,
             }),
-        ) as jest.Mock;
+        ) as jest.Mock
 
-        const returnedToken = await action.authenticate('mock-client-id', 'mock-client-secret')
+        const returnedToken = await action.authenticate(
+            'mock-client-id',
+            'mock-client-secret',
+        )
         const params = new URLSearchParams({
             grant_type: 'client_credentials',
             client_id: 'mock-client-id',
             client_secret: 'mock-client-secret',
-            audience: 'https://api.devcycle.com/'
+            audience: 'https://api.devcycle.com/',
         })
-
 
         expect(fetch).toBeCalledWith(
             'https://auth.devcycle.com/oauth/token',
-            expect.objectContaining({body: params.toString()}))
+            expect.objectContaining({ body: params.toString() }),
+        )
         expect(returnedToken).toEqual('123')
     })
 
@@ -88,12 +89,15 @@ describe('authenticate', () => {
             Promise.resolve({
                 json: () => Promise.resolve('Some error'),
                 ok: false,
-                status: 401
+                status: 401,
             }),
-        ) as jest.Mock;
-        const authenticate = () => action.authenticate('mock-client-id', 'mock-client-secret')
+        ) as jest.Mock
+        const authenticate = () =>
+            action.authenticate('mock-client-id', 'mock-client-secret')
 
-        await expect(authenticate).rejects.toThrow('Failed to authenticate with the DevCycle API. Check your credentials.')
+        await expect(authenticate).rejects.toThrow(
+            'Failed to authenticate with the DevCycle API. Check your credentials.',
+        )
     })
 })
 
@@ -115,9 +119,9 @@ describe('postCodeUsages', () => {
         github.context = {
             repo: {
                 owner: 'mock-owner',
-                repo: 'mock-repo'
+                repo: 'mock-repo',
             },
-            ref: 'refs/heads/main'
+            ref: 'refs/heads/main',
         }
     })
 
@@ -125,39 +129,42 @@ describe('postCodeUsages', () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 json: () => Promise.resolve({}),
-                ok: true
+                ok: true,
             }),
-        ) as jest.Mock;
+        ) as jest.Mock
         await action.postCodeUsages([])
 
         expect(action.authenticate).toBeCalledWith('id', 'secret')
         expect(fetch).toBeCalledWith(
             'https://api.devcycle.com/v1/projects/my-project/codeUsages',
-                {
-                    body: JSON.stringify({
-                        source: 'github',
-                        repo: 'mock-owner/mock-repo',
-                        branch: github.context.ref.split('/').pop(),
-                        variables: []
-                    }),
-                    method: 'POST',
-                    headers: expect.objectContaining({
-                        Authorization: 'generated-token',
-                        'dvc-referrer': 'github.code_usages'
-                    })
-                })
+            {
+                body: JSON.stringify({
+                    source: 'github',
+                    repo: 'mock-owner/mock-repo',
+                    branch: github.context.ref.split('/').pop(),
+                    variables: [],
+                }),
+                method: 'POST',
+                headers: expect.objectContaining({
+                    Authorization: 'generated-token',
+                    'dvc-referrer': 'github.code_usages',
+                }),
+            },
+        )
     })
 
     it('fails if an error is thrown when sending code usages', async () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 json: () => Promise.resolve('Some error'),
-                ok: false
+                ok: false,
             }),
-        ) as jest.Mock;
+        ) as jest.Mock
 
         const postCodeUsages = () => action.postCodeUsages([])
 
-        await expect(postCodeUsages).rejects.toThrow('Failed to submit Code Usages.')
+        await expect(postCodeUsages).rejects.toThrow(
+            'Failed to submit Code Usages.',
+        )
     })
 })

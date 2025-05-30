@@ -1,4 +1,5 @@
 ## Overview
+
 With this Github action, your [DevCycle](https://devcycle.com/) dashboard will be updated to display code snippets for each DevCycle variable usage within your project.
 
 Note: This is intended to run when pushing changes to your main branch
@@ -8,6 +9,7 @@ Note: This is intended to run when pushing changes to your main branch
 ![Example Output](https://raw.githubusercontent.com/DevCycleHQ/feature-flag-code-usage-action/main/example_output.png)
 
 ### Usage
+
 Create a new Actions workflow in your GitHub repository (e.g. devcycle-usages.yml) in the .github/workflows directory. In your new file, paste the following code:
 
 ```yaml
@@ -45,5 +47,6 @@ When referencing your API client ID and secret, we recommend using [GitHub Secre
 | `client-secret` | yes | Your organization's API client secret, see [Organization Settings](https://app.devcycle.com/r/settings) |
 
 ### Configuration
+
 The patterns used to identify references to variables in your code are fully customizable.
 This action uses the [DevCycle CLI](https://github.com/DevCycleHQ/cli) under the hood, for details on how to configure the pattern matcher see the [CLI configuration](https://github.com/DevCycleHQ/cli#configuration).
