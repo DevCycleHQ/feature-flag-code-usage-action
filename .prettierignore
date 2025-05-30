@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+.yarn/
+
+# Build output
+lib/
+dist/
+
+# Package files
+package-lock.json
+yarn.lock
+
+# Other
+.git/
+*.md 
