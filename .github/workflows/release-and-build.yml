@@ -57,7 +57,7 @@ jobs:
           draft: ${{ github.event.inputs.draft }}
       - name: Update README.md
         run: |
-          sed -i -E 's/(DevCycleHQ\/feature-flag-code-usage-action@)(main|v[0-9]+\.[0-9]+\.[0-9]+)/\1${{steps.prepare_release.outputs.next-release-tag}}/g' README.md
+          sed -i -E 's/(DevCycleHQ\/feature-flag-code-usage-action@)(main|v[0-9]+\.[0-9]+\.[0-9]+)/\1v${{steps.prepare_release.outputs.next-release-tag}}/g' README.md
         if: github.event.inputs.draft != true
 
       - name: Commit version change and README update
