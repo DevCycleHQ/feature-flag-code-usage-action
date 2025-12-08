@@ -2,6 +2,8 @@ on:
   push:
 
 name: Test Workflow
+permissions:
+  contents: read
 
 jobs:
   dvc-code-usages:
