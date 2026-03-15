@@ -79,7 +79,7 @@ function run() {
             return;
         }
         try {
-            yield (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@5.20.3']);
+            yield (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@6.2.2']);
             const output = yield (0, exec_1.getExecOutput)('dvc', [
                 'usages',
                 '--format',
