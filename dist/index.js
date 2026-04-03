@@ -69,7 +69,7 @@ async function run() {
         return;
     }
     try {
-        await (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@6.2.2']);
+        await (0, exec_1.exec)('npm', ['install', '-g', '@devcycle/cli@6.3.0']);
         const output = await (0, exec_1.getExecOutput)('dvc', [
             'usages',
             '--format',
