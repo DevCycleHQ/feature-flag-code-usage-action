@@ -38,7 +38,10 @@
     },
     "resolutions": {
         "minimatch": "^9.0.7",
-        "tar": "^7.5.11"
+        "tar": "^7.5.11",
+        "brace-expansion@npm:^2.0.1": "2.0.3",
+        "brace-expansion@npm:^2.0.2": "2.0.3",
+        "picomatch@npm:^2.3.1": "2.3.2"
     },
     "packageManager": "yarn@4.9.1"
 }
