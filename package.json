@@ -42,7 +42,7 @@
         "brace-expansion@npm:^2.0.1": "^2.0.3",
         "brace-expansion@npm:^2.0.2": "^2.0.3",
         "picomatch": "^2.3.2",
-        "ip-address@npm:^9.0.5": "^10.1.1"
+        "socks": "^2.8.9"
     },
     "packageManager": "yarn@4.9.1"
 }
