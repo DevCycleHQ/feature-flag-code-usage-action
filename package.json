@@ -41,7 +41,8 @@
         "tar": "^7.5.11",
         "brace-expansion@npm:^2.0.1": "^2.0.3",
         "brace-expansion@npm:^2.0.2": "^2.0.3",
-        "picomatch": "^2.3.2"
+        "picomatch": "^2.3.2",
+        "socks": "^2.8.9"
     },
     "packageManager": "yarn@4.9.1"
 }
