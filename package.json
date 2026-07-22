@@ -37,8 +37,12 @@
         "@actions/github": "^8.0.1"
     },
     "resolutions": {
+        "@babel/core": ">=7.29.6 <8",
+        "js-yaml": ">=3.15.0 <4",
         "minimatch": "^9.0.7",
-        "tar": "^7.5.15"
+        "tar": ">=7.5.16",
+        "undici": ">=6.27.0 <7",
+        "undici-types": ">=6.21.0 <7"
     },
     "packageManager": "yarn@4.9.1"
 }
