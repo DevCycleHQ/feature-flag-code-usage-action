@@ -37,6 +37,9 @@
         "@actions/github": "^8.0.1"
     },
     "resolutions": {
+        "glob@npm:^10.2.2": "^14.0.2",
+        "glob@npm:^10.3.10": "^14.0.2",
+        "glob@npm:^10.3.7": "^14.0.2",
         "@babel/core": ">=7.29.6 <8",
         "brace-expansion": ">=2.1.7 <3",
         "browserslist": ">=4.28.9 <5",
