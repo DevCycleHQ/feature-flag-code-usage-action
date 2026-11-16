@@ -41,7 +41,6 @@
         "glob@npm:^10.3.10": "^14.0.2",
         "glob@npm:^10.3.7": "^14.0.2",
         "@babel/core": ">=7.29.6 <8",
-        "brace-expansion": ">=2.1.7 <3",
         "browserslist": ">=4.28.9 <5",
         "ip-address": ">=10.7.4 <11",
         "js-yaml": ">=3.15.2 <4",
